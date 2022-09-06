@@ -11,6 +11,7 @@ public class PlayerScript : MonoBehaviour
     public Transform rightWheel_Transform;
     public float maxSteeringAngle = 10.0f;
     public float maxMotorTorque = 20.0f;
+    public float boost = 30.0f;
     private float horizontal_Input;
     private float Vertical_Input;
     private float steeringAngle;
@@ -52,9 +53,16 @@ public class PlayerScript : MonoBehaviour
         rb.velocity = forward * Input.GetAxis("Vertical") * maxMotorTorque + transform.right * Input.GetAxis("Horizontal") * maxMotorTorque;
         rb.velocity = Vector3.ClampMagnitude(rb.velocity, maxMotorTorque);
         transform.Rotate(Vector3.up, Input.GetAxis("RotateHorizontal") * Time.deltaTime * 360, Space.World);
+
+        if(Input.GetButton("Boost")){
+            rb.velocity = forward * Input.GetAxis("Vertical") * boost + transform.right * Input.GetAxis("Horizontal") * boost;
+            rb.velocity = Vector3.ClampMagnitude(rb.velocity, boost);
+            transform.Rotate(Vector3.up, Input.GetAxis("RotateHorizontal") * Time.deltaTime * 360, Space.World);
+
+        }
     }
 
-        void UpdateWheelPose(WheelCollider _collider, Transform _transform) 
+    void UpdateWheelPose(WheelCollider _collider, Transform _transform) 
     {
         Vector3 pos = _transform.position;
         Quaternion quat = _transform.rotation;
@@ -63,5 +71,11 @@ public class PlayerScript : MonoBehaviour
 
         _transform.position = pos;
         _transform.rotation = quat; 
+    }
+
+    void OnCollisionEnter(Collision other) {
+        if(other.gameObject.tag == "ball"){
+            other.rigidbody.AddForce(transform.forward * 1.0f, ForceMode.Force);
+        }
     }
 }
