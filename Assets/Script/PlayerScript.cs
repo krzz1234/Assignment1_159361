@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 //Reference https://docs.unity3d.com/Manual/WheelColliderTutorial.html
 public class PlayerScript : MonoBehaviour
@@ -9,12 +11,18 @@ public class PlayerScript : MonoBehaviour
     public WheelCollider rightWheel;
     public Transform leftWheel_Transform;
     public Transform rightWheel_Transform;
+    public Slider BoosterSlider;
+    public TMP_Text Score;
+    public TriggerScript Player_side;
+    public TriggerScript AI_side;
     public float maxSteeringAngle = 10.0f;
     public float maxMotorTorque = 20.0f;
     public float boost = 30.0f;
     private float horizontal_Input;
     private float Vertical_Input;
     private float steeringAngle;
+    private int Player = 0;
+    private int AI = 0;
 
     private Rigidbody rb;
     // Start is called before the first frame update
@@ -29,7 +37,16 @@ public class PlayerScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        // Additional Feature: Score
+        if(AI_side.Player_Scored){
+            Player += 1;
+            AI_side.Player_Scored = false;
+        }
+        if(Player_side.AI_Scored){
+            AI += 1;
+            Player_side.AI_Scored = false;
+        }
+        Score.text = "PLAYER " + Player + " : " + AI + " AI";
     }
 
     void FixedUpdate()
@@ -54,11 +71,15 @@ public class PlayerScript : MonoBehaviour
         rb.velocity = Vector3.ClampMagnitude(rb.velocity, maxMotorTorque);
         transform.Rotate(Vector3.up, Input.GetAxis("RotateHorizontal") * Time.deltaTime * 360, Space.World);
 
-        if(Input.GetButton("Boost")){
+        // Additional feature: Booster
+        if(Input.GetKey("space") && BoosterSlider.value > 0.0f){
             rb.velocity = forward * Input.GetAxis("Vertical") * boost + transform.right * Input.GetAxis("Horizontal") * boost;
             rb.velocity = Vector3.ClampMagnitude(rb.velocity, boost);
             transform.Rotate(Vector3.up, Input.GetAxis("RotateHorizontal") * Time.deltaTime * 360, Space.World);
-
+            BoosterSlider.value -= 0.3f;
+        }
+        if(!Input.GetKey("space")) {
+            BoosterSlider.value += 0.05f;
         }
     }
 

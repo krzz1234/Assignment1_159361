@@ -1,19 +1,23 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class TriggerScript : MonoBehaviour
 {
+    public bool AI_Scored = false;
+    public bool Player_Scored =false;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     private void OnTriggerEnter(Collider other) {
@@ -23,5 +27,13 @@ public class TriggerScript : MonoBehaviour
             Rigidbody rb = ball.GetComponent<Rigidbody>();
             rb.Sleep();
         }
+        // Additonal Feature: Score
+        if(gameObject.tag == "AI Side"){
+            Player_Scored = true;
+        }
+        if(gameObject.tag == "Player Side"){
+            AI_Scored = true;
+        }
+         
     }
 }
