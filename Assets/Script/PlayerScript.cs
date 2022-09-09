@@ -15,6 +15,7 @@ public class PlayerScript : MonoBehaviour
     public TMP_Text Score;
     public TriggerScript Player_side;
     public TriggerScript AI_side;
+    public GameObject Ball;
     public float maxSteeringAngle = 10.0f;
     public float maxMotorTorque = 20.0f;
     public float boost = 30.0f;
@@ -23,12 +24,17 @@ public class PlayerScript : MonoBehaviour
     private float steeringAngle;
     private int Player = 0;
     private int AI = 0;
+    private Vector3 initialPosition;
 
     private Rigidbody rb;
+    private Rigidbody rb_Ball;
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        rb_Ball = Ball.GetComponent<Rigidbody>();
+
+        initialPosition = transform.position;
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;   
@@ -47,6 +53,13 @@ public class PlayerScript : MonoBehaviour
             Player_side.AI_Scored = false;
         }
         Score.text = "PLAYER " + Player + " : " + AI + " AI";
+
+        // Aditional Feature: Resset position
+        if(Input.GetKey("r")){
+            transform.position = initialPosition;
+            Ball.transform.position = new Vector3(0, 0, 0);
+            rb_Ball.velocity = new Vector3(0, 0, 0);
+        }
     }
 
     void FixedUpdate()
